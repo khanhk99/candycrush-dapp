@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candy Crush Dapp</title>
+</head>
+<body>
+    <div>
+        <h3 id="metamaskIsInstall"></h3>
+        <button id="checkMM">Connect to metamask</button>
+    </div>
+    <div>
+        <div>
+            <label>Start date</label>
+            <input type="datetime-local" name="startDate">
+        </div>
+        <div>
+            <label>End date</label>
+            <input type="datetime-local" name="endDate">
+        </div>
+        <button id="createEvent">Create event</button>
+    </div>
+</body>
+<script src="./js/jquery-3.6.0.min.js"></script>
+<script src="./node_modules/web3.js-browser/build/web3.js"></script>
+<script src='./node_modules/web3/dist/web3.min.js'></script>
+<script src="./js/process.js"></script>
+</html>
