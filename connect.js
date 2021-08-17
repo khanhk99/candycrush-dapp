@@ -9,11 +9,8 @@ var server = require("http").Server(app);
 server.listen(3000);
 
 var bodyParser = require("body-parser");
-const { default: Web3 } = require("web3");
 app.use(bodyParser.urlencoded({extended:false}));
 
-require("./route")(app);
+const Web3 = require("web3");
 
-async function loadContract() {
-    return await new window.web3.eth.Contract("./abi.json", 0x6927498B716d1Df82Ec8660F6FC65D27f8882b84);
-}
+require("./route")(app);

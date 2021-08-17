@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candy Crush Dapp</title>
+    <link rel="stylesheet" href="./libs/bootstrap-4.6.0-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./libs/fontawesome-free-5.15.3-web/css/all.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div>
+            <h4 id="metamaskIsInstall"></h4>
+            <button class="btn btn-primary" id="checkMM">Connect to metamask</button>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="new-game">
+                    <h3>New game</h3>
+                    <div class="form-group">
+                        <label>Deadline</label>
+                        <input type="datetime-local" id="deadlineNew" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Fee</label>
+                        <input type="number" id="feeNew" class="form-control">
+                    </div>
+                    <button class="btn btn-success" id="createGame">Create new game</button>
+                </div>
+            </div>
+            <div class="col-md-6 col-12">
+                <div class="game-running">
+                    <div class="form-group">
+                        <label>Token TRC21:</label>
+                        <div id="tokenTRC21">
+                            <input type="string" value="">
+                            <button class="btn btn-success">Save</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Deadline:</label>
+                        <div id="deadline"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Fee:</label>
+                        <div id="fee"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount:</label>
+                        <div id="amount"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="./js/jquery-3.6.0.min.js"></script>
+<script src="./node_modules/web3.js-browser/build/web3.js"></script>
+<script src='./node_modules/web3/dist/web3.min.js'></script>
+<script src="./js/process.js"></script>
+
+</html>

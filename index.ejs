@@ -1,30 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Candy Crush Dapp</title>
+    <link rel="stylesheet" href="./libs/bootstrap-4.6.0-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./libs/fontawesome-free-5.15.3-web/css/all.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/game.css">
 </head>
 <body>
-    <div>
-        <h3 id="metamaskIsInstall"></h3>
-        <button id="checkMM">Connect to metamask</button>
-    </div>
-    <div>
-        <div>
-            <label>Start date</label>
-            <input type="datetime-local" name="startDate">
+    <div id="home">
+        <div class="text-center mb-5">
+            <h4 id="metamaskIsInstall"></h4>
+            <button class="btn btn-primary" id="checkMM">Connect metamask to play</button>
         </div>
-        <div>
-            <label>End date</label>
-            <input type="datetime-local" name="endDate">
+        <div class="play-game mt-5">
+            <div class="score-board"> 
+                <h3>score</h3>
+                <h1 id="score"></h1>
+                <button class="btn btn-success" id="savePoint">Save score</button>
+            </div>
+            <div class="grid"></div>
         </div>
-        <button id="createEvent">Create event</button>
+        <div class="game-running">
+            <table class="table table-bordered">
+                <tr>
+                    <td>Deadline:</td>
+                    <td id="deadline"></td>
+                </tr>
+                <tr>
+                    <td>Fee:</td>
+                    <td id="fee"></td>
+                </tr>
+                <tr>
+                    <td>Amount:</td>
+                    <td id="amount"></td>
+                </tr>
+            </table>
+            <table class="table table-striped" id="tablePoint"></table>
+        </div>
     </div>
 </body>
 <script src="./js/jquery-3.6.0.min.js"></script>
 <script src="./node_modules/web3.js-browser/build/web3.js"></script>
 <script src='./node_modules/web3/dist/web3.min.js'></script>
 <script src="./js/process.js"></script>
+<script src="./js/game.js"></script>
+
 </html>
