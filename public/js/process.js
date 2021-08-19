@@ -1,13 +1,17 @@
 var currentAccount = "";
 var contractGame;
 var contractSocket;
+const addressSM = "0x0bb382edC56ee6618F7771C5494a92F0B15E255f";
+const addressToken = "0x64FC6539E988bd8c1346A5bedbDaA9c210176d4b";
 $(document).ready(function(){
-    //check metamask install?
+    // check metamask install?
     if (typeof window.ethereum !== 'undefined') {
+        window.ethereum.enable();
         $("#metamaskIsInstall").html('MetaMask is installed!').css("color", "green");
     }else{
         $("#metamaskIsInstall").html('MetaMask is not install!').css("color", "red");
     }
+
 
     const abi = [
         {
@@ -345,11 +349,344 @@ $(document).ready(function(){
         }
     ];
 
-    const addressSM = "0x97EaF28E337459F587420a28BcC338A54d100352";
-    var provider = new Web3.providers.HttpProvider('https://rpc.testnet.tomochain.com');
-    const web3 = new Web3(provider);
-    // window.ethereum.enable();
+    const token_abi = [
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "name",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "spender",
+                    "type": "address"
+                },
+                {
+                    "name": "value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "approve",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "estimateFee",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "totalSupply",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "issuer",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "from",
+                    "type": "address"
+                },
+                {
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "name": "value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "transferFrom",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "minFee",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "decimals",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint8"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setMinFee",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "owner",
+                    "type": "address"
+                }
+            ],
+            "name": "balanceOf",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "symbol",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "name": "value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "transfer",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "name": "spender",
+                    "type": "address"
+                }
+            ],
+            "name": "allowance",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "name": "symbol",
+                    "type": "string"
+                },
+                {
+                    "name": "decimals",
+                    "type": "uint8"
+                },
+                {
+                    "name": "cap",
+                    "type": "uint256"
+                },
+                {
+                    "name": "minFee",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "name": "from",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Transfer",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "name": "spender",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Approval",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "name": "from",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "name": "issuer",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Fee",
+            "type": "event"
+        }
+    ];
+
+    connectMM();
+    
+    const web3 = new Web3(window.ethereum);
     contractGame = new web3.eth.Contract(abi, addressSM);
+    contractToken = new web3.eth.Contract(token_abi, addressToken);
 
     console.log(contractGame);
 
@@ -386,11 +723,10 @@ $("#checkMM").click(function(){
 });
 
 $("#tokenTRC21 button").click(function(){
-    console.log(currentAccount);
     var tokenTRC21 = $("#tokenTRC21 input").val();
-    contractGame.methods.setTokenTRC21(tokenTRC21).send(
-        {from: currentAccount}
-    ).then(function(){
+    contractGame.methods.setTokenTRC21(tokenTRC21).send({
+        from: currentAccount
+    }).then(function(){
         alert("Add token TRC21 success");
     }).catch(function(err){
         alert(err);
@@ -411,14 +747,21 @@ $("#createGame").click(function(){
 });
 
 $("#savePoint").click(function(){
-    let point = $("#score").html();
-    contractGame.methods.savePoint(point).send(
-        {from: currentAccount}
-    ).then(function(data){
-        console.log(data);
-    }).catch(function(err){
-        console.log(err);
-    });
+    contractGame.methods.fee().call()
+    .then(function(fee){
+        contractToken.methods.approve(addressSM, fee).send({from: currentAccount})
+        .then(function(){
+            let point = $("#score").html();
+            contractGame.methods.savePoint(point).send(
+                {from: currentAccount}
+            ).then(function(data){
+                console.log(data);
+            }).catch(function(err){
+                console.log(err);
+            });
+        })
+        
+    })
 })
 
 async function connectMM(){
