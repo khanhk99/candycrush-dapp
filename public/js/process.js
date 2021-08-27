@@ -718,7 +718,7 @@ $(document).ready(function () {
         if(error){
             console.log(error);
         }else{
-            $("#tableScore").append(`<tr><td>${event.returnValues._user}</td><td>${event.returnValues._point}</td></tr>`);
+            $("#tableScore").append(`<tr><td>${event.returnValues._user}</td><td>${event.returnValues._point}</td><td>${event.returnValues._point}</td></tr>`);
         }
     });
 });
