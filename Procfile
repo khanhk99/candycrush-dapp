@@ -1,1 +1,1 @@
-Web: node connect
+Web: node connect.js
