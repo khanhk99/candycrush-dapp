@@ -21,3 +21,15 @@
 #home .play-game{
     display: none;
 }
+
+.img-loading{
+    display: none;
+}
+
+.img-loading img{
+    width: 100px;
+}
+
+body.loading .img-loading{
+    display: flex;
+}

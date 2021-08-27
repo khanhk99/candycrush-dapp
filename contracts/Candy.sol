@@ -109,11 +109,27 @@ contract Pausable is Ownable {
 }
 
 interface ITRC21 {
+    function totalSupply() external view returns (uint256);
+
     function balanceOf(address who) external view returns (uint256);
+
+    function issuer() external view returns (address);
+
+    function estimateFee(uint256 value) external view returns (uint256);
+
     function allowance(address owner, address spender) external view returns (uint256);
+
     function transfer(address to, uint256 value) external returns (bool);
+
     function approve(address spender, uint256 value) external returns (bool);
+
     function transferFrom(address from, address to, uint256 value) external returns (bool);
+
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+
+    event Fee(address indexed from, address indexed to, address indexed issuer, uint256 value);
 }
 
 contract Game is Ownable, Pausable{
@@ -139,6 +155,7 @@ contract Game is Ownable, Pausable{
     function setTokenTRC21(address tokenAddress) public onlyOwner{
         tokenTRC21 = tokenAddress;
     }
+    
    //set deadline for game
     function setDeadline(uint _timestamp) private {
         require(deadline < block.timestamp, "A game is running");
@@ -147,7 +164,7 @@ contract Game is Ownable, Pausable{
     
     //set fee for game
     function setFee(uint _fee) private {
-        require(_fee > 10**18, "Require fee greater than 1");
+        require(_fee >= 10 * 10**18, "Require fee greater than 1");
         fee = _fee;
     }
     
@@ -159,7 +176,7 @@ contract Game is Ownable, Pausable{
     }
     
     //User save point after play
-    function savePoint(uint _point) external whenNotPaused{
+    function savePoint(uint _point) public {
         require(ITRC21(tokenTRC21).transferFrom(_msgSender(), address(this), fee));
         UserPoint memory userPoint = UserPoint(gameId, _point, _msgSender());
         userPoints.push(userPoint);
@@ -171,12 +188,12 @@ contract Game is Ownable, Pausable{
     function reward(address _top1, address _top2, address _top3) public onlyOwner{
         uint amountTop1 = amount * 60 / 100;
         uint amountTop2 = amount * 30 / 100;
-        uint amountTop3 = amount * 10 / 100;
-        ITRC21(tokenTRC21).transferFrom(address(this), _top1, amountTop1);
+        uint amountTop3 = amount - amountTop1 - amountTop2;
+        ITRC21(tokenTRC21).transfer(_top1, amountTop1);
         amount -= amountTop1;
-        ITRC21(tokenTRC21).transferFrom(address(this), _top2, amountTop2);
+        ITRC21(tokenTRC21).transfer(_top2, amountTop2);
         amount -= amountTop2;
-        ITRC21(tokenTRC21).transferFrom(address(this), _top3, amountTop3);
+        ITRC21(tokenTRC21).transfer(_top3, amountTop3);
         amount -= amountTop3;
         emit Reward(_top1, _top2, _top3);
     }

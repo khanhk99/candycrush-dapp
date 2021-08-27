@@ -1,14 +1,14 @@
 var currentAccount = "";
 var contractGame;
 var contractSocket;
-const addressSM = "0x0bb382edC56ee6618F7771C5494a92F0B15E255f";
+const addressSM = "0xcd9abcC368aF6937fb987E9DcE1327d9E66Bf0e5";
 const addressToken = "0x64FC6539E988bd8c1346A5bedbDaA9c210176d4b";
-$(document).ready(function(){
+$(document).ready(function () {
     // check metamask install?
     if (typeof window.ethereum !== 'undefined') {
         window.ethereum.enable();
         $("#metamaskIsInstall").html('MetaMask is installed!').css("color", "green");
-    }else{
+    } else {
         $("#metamaskIsInstall").html('MetaMask is not install!').css("color", "red");
     }
 
@@ -683,7 +683,7 @@ $(document).ready(function(){
     ];
 
     connectMM();
-    
+
     const web3 = new Web3(window.ethereum);
     contractGame = new web3.eth.Contract(abi, addressSM);
     contractToken = new web3.eth.Contract(token_abi, addressToken);
@@ -692,79 +692,97 @@ $(document).ready(function(){
 
     //admin
     contractGame.methods.tokenTRC21().call()
-    .then(function(data){
-        $("#tokenTRC21 input").val(data);
-    })
+        .then(function (data) {
+            $("#tokenTRC21 input").val(data);
+        })
     contractGame.methods.deadline().call()
-    .then(function(data){
-        let deadline = new Date(data * 1000);
-        $("#deadline").html(`${deadline.getHours()}:${deadline.getMinutes()} ${deadline.getDate()}/${deadline.getMonth()}/${deadline.getFullYear()}`);
-    })
+        .then(function (data) {
+            let deadline = new Date(data * 1000);
+            $("#deadline").html(`${deadline.getHours()}:${deadline.getMinutes()} ${deadline.getDate()}/${deadline.getMonth()}/${deadline.getFullYear()}`);
+        })
     contractGame.methods.fee().call()
-    .then(function(data){
-        $("#fee").html(`${data/10**18} TAB`);
-    })
+        .then(function (data) {
+            $("#fee").html(`${data / 10**18} TAB`);
+        })
     contractGame.methods.amount().call()
-    .then(function(data){
-        $("#amount").html(data);
-    })
+        .then(function (data) {
+            $("#amount").html(data / 10**18);
+        })
     //user
-    
 });
 
-$("#checkMM").click(function(){
-    connectMM().then((data)=>{
+$("#checkMM").click(function () {
+    connectMM().then((data) => {
         $("#checkMM").replaceWith($("<h5>" + data + "</h5>"));
         $("#home .play-game").css("display", "flex");
         currentAccount = data;
-    }).catch((err)=>{
+    }).catch((err) => {
         $("#checkMM").html("Please connect again");
     });
 });
 
-$("#tokenTRC21 button").click(function(){
+$("#tokenTRC21 button").click(function () {
     var tokenTRC21 = $("#tokenTRC21 input").val();
     contractGame.methods.setTokenTRC21(tokenTRC21).send({
         from: currentAccount
-    }).then(function(){
+    }).then(function () {
         alert("Add token TRC21 success");
-    }).catch(function(err){
+    }).catch(function (err) {
         alert(err);
     });
 });
 
-$("#createGame").click(function(){
-    let deadline = Date.parse($("#deadlineNew").val())/1000;
+$("#createGame").click(function () {
+    let deadline = Date.parse($("#deadlineNew").val()) / 1000;
     let fee = $("#feeNew").val();
 
     contractGame.methods.newGame(deadline, String(fee * 10**18)).send(
-        {from: currentAccount}
-    ).then(function(){
+        { from: currentAccount }
+    ).then(function () {
         alert("Add new game success");
-    }).catch(function(err){
+    }).catch(function (err) {
         alert(err);
     });
 });
 
-$("#savePoint").click(function(){
-    contractGame.methods.fee().call()
-    .then(function(fee){
-        contractToken.methods.approve(addressSM, fee).send({from: currentAccount})
-        .then(function(){
-            let point = $("#score").html();
-            contractGame.methods.savePoint(point).send(
-                {from: currentAccount}
-            ).then(function(data){
-                console.log(data);
-            }).catch(function(err){
-                console.log(err);
-            });
-        })
-        
+$("#savePoint").click(async function () {
+    $("body").addClass("loading");
+    let fee = await contractGame.methods.fee().call();
+    let transferFee = 100;
+    console.log(`fee = ${fee}`)
+    contractToken.methods.approve(addressSM, fee + transferFee).send(
+        { from: currentAccount }
+    ).then(function (data) {
+        console.log(data);
+        let point = $("#score").html();
+        contractGame.methods.savePoint(point).send(
+            { from: currentAccount }
+        ).then(function (data) {
+            $("body").removeClass("loading");
+            alert("Add score success");
+        }).catch(function (err) {
+            alert("Add score fail");
+            $("body").removeClass("loading");
+        });
+    }).catch(function (err) {
+        $("body").removeClass("loading");
     })
 })
 
-async function connectMM(){
+$("#reward").click(function () {
+    let top1 = $(".reward #top1").val();
+    let top2 = $(".reward #top2").val();
+    let top3 = $(".reward #top3").val();
+    contractGame.methods.reward(top1, top2, top3).send(
+        { from: currentAccount }
+    ).then(function (data) {
+        console.log(data);
+    }).catch(function(err){
+        console.log(err);
+    })
+})
+
+async function connectMM() {
     const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
     return accounts[0];
 }
