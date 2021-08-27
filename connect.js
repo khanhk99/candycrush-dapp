@@ -6,7 +6,7 @@ app.set("views","./");
 app.use("/node_modules", express.static(__dirname+"/node_modules"));
 
 var server = require("http").Server(app);
-server.listen(80);
+server.listen(3000);
 
 var bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended:false}));
