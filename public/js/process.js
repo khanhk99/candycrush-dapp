@@ -682,13 +682,17 @@ $(document).ready(function () {
         }
     ];
 
+
+
     connectMM();
 
     const web3 = new Web3(window.ethereum);
     contractGame = new web3.eth.Contract(abi, addressSM);
     contractToken = new web3.eth.Contract(token_abi, addressToken);
 
-    console.log(contractGame);
+    var provider = new Web3.providers.WebsocketProvider("wss://ws.testnet.tomochain.com");
+    var web3_socket = new Web3(provider);
+    var contract_socket = new web3_socket.eth.Contract(abi, addressSM);
 
     //admin
     contractGame.methods.tokenTRC21().call()
@@ -702,13 +706,21 @@ $(document).ready(function () {
         })
     contractGame.methods.fee().call()
         .then(function (data) {
-            $("#fee").html(`${data / 10**18} TAB`);
+            $("#fee").html(`${data / 10 ** 18} TAB`);
         })
     contractGame.methods.amount().call()
         .then(function (data) {
-            $("#amount").html(data / 10**18);
+            $("#amount").html(data / 10 ** 18);
         })
-    //user
+
+    // events
+    contract_socket.events.SaveNewPoint({filter:{}, fromBlock:"latest"}, function(error, event){
+        if(error){
+            console.log(error);
+        }else{
+            $("#tableScore").append(`<tr><td>${event.returnValues._user}</td><td>${event.returnValues._point}</td></tr>`);
+        }
+    });
 });
 
 $("#checkMM").click(function () {
@@ -736,7 +748,7 @@ $("#createGame").click(function () {
     let deadline = Date.parse($("#deadlineNew").val()) / 1000;
     let fee = $("#feeNew").val();
 
-    contractGame.methods.newGame(deadline, String(fee * 10**18)).send(
+    contractGame.methods.newGame(deadline, String(fee * 10 ** 18)).send(
         { from: currentAccount }
     ).then(function () {
         alert("Add new game success");
@@ -770,6 +782,8 @@ $("#savePoint").click(async function () {
 })
 
 $("#reward").click(function () {
+
+
     let top1 = $(".reward #top1").val();
     let top2 = $(".reward #top2").val();
     let top3 = $(".reward #top3").val();
@@ -777,7 +791,7 @@ $("#reward").click(function () {
         { from: currentAccount }
     ).then(function (data) {
         console.log(data);
-    }).catch(function(err){
+    }).catch(function (err) {
         console.log(err);
     })
 })
